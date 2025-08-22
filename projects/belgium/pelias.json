@@ -4,7 +4,7 @@
     "timestamp": false
   },
   "esclient": {
-    "apiVersion": "5.6",
+    "apiVersion": "7.5",
     "hosts": [
       { "host": "elasticsearch" }
     ]
@@ -19,7 +19,6 @@
     }
   },
   "api": {
-    "textAnalyzer": "libpostal",
     "services": {
       "pip": { "url": "http://pip:4200" },
       "libpostal": { "url": "http://libpostal:4400" },
@@ -51,7 +50,7 @@
     },
     "openaddresses": {
       "datapath": "/data/openaddresses",
-      "files": ["be/bru/brussels-fr.csv", "be/bru/brussels-nl.csv", "be/flanders.csv", "be/wal/namur.csv"]
+      "files": ["be/bru/bosa-region-brussels-nl.csv", "be/bru/bosa-region-brussels-fr.csv", "be/vlg/bosa-region-flanders-nl.csv", "be/wal/bosa-region-wallonia-fr.csv"]
     },
     "polyline": {
       "datapath": "/data/polylines",
@@ -59,7 +58,7 @@
     },
     "whosonfirst": {
       "datapath": "/data/whosonfirst",
-      "importVenues": false,
+      "countryCode": "BE",
       "importPostalcodes": true,
       "importPlace": [ "85632997" ]
     }

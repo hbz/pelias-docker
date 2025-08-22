@@ -1,7 +1,30 @@
+<p align="center">
+  <img height="100" src="https://raw.githubusercontent.com/pelias/design/master/logo/pelias_github/Github_markdown_hero.png">
+</p>
+<h3 align="center">A modular, open-source search engine for our world.</h3>
+<p align="center">Pelias is a geocoder powered completely by open data, available freely to everyone.</p>
+<p align="center">
+<a href="https://en.wikipedia.org/wiki/MIT_License"><img src="https://img.shields.io/github/license/pelias/api?style=flat&color=orange" /></a>
+<a href="https://hub.docker.com/u/pelias"><img src="https://img.shields.io/docker/pulls/pelias/api?style=flat&color=informational" /></a>
+<a href="https://gitter.im/pelias/pelias"><img src="https://img.shields.io/gitter/room/pelias/pelias?style=flat&color=yellow" /></a>
+</p>
+<p align="center">
+	<a href="https://github.com/pelias/docker">Local Installation</a> ·
+        <a href="https://geocode.earth">Cloud Webservice</a> ·
+	<a href="https://github.com/pelias/documentation">Documentation</a> ·
+	<a href="https://gitter.im/pelias/pelias">Community Chat</a>
+</p>
+<details open>
+<summary>What is Pelias?</summary>
+<br />
+Pelias is a search engine for places worldwide, powered by open data. It turns addresses and place names into geographic coordinates, and turns geographic coordinates into places and addresses. With Pelias, you’re able to turn your users’ place searches into actionable geodata and transform your geodata into real places.
+<br /><br />
+We think open data, open source, and open strategy win over proprietary solutions at any part of the stack and we want to ensure the services we offer are in line with that vision. We believe that an open geocoder improves over the long-term only if the community can incorporate truly representative local knowledge.
+</details>
 
 # Pelias in Docker
 
-This repository contains a framework for downloading/preparing and building the [Pelias Geocoder](https://github.com/pelias/pelias) using Docker and [Docker Compose](https://github.com/docker/compose#docker-compose).
+This repository contains a framework for downloading/preparing and building the [Pelias Geocoder](https://github.com/pelias/pelias) using Docker and [Docker Compose](https://github.com/docker/compose#docker-compose-v2).
 
 ## Projects
 
@@ -13,7 +36,20 @@ Once you have successfully completed a small build you can use this as a base to
 
 ## Prerequisites
 
-You will need to have `docker` and `docker-compose` installed before continuing. If you are not using the latest version, please mention that in any bugs reports.
+You will need to have a [modern version of `docker`](https://docs.docker.com/engine/release-notes/) and a [modern version of `docker compose`](https://github.com/docker/compose/releases) installed before continuing. If you are not using the latest version, please mention that in any bugs reports.
+
+This project supports Linux and Mac OSX operatings systems. Windows is currently [not supported](https://github.com/pelias/docker/issues/124).
+
+### Permissions
+
+In order to ensure security, Pelias docker containers, and the `pelias` helper script, will not run as a root user!
+
+Be sure you are running as a non-root user and that this user can execute `docker` commands. See the Docker documentation article [Manage Docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) to do this.
+
+## Requirements for Linux
+- Install `util-linux` using your distribution's package manager
+  - Alpine Linux: `sudo apk add util-linux`
+  - Debian/Ubuntu: `sudo apt-get install util-linux` 
 
 ## Requirements for Mac OSX
 - install GNU coreutils with [Homebrew](https://brew.sh/): `brew install coreutils`.
@@ -24,6 +60,60 @@ You will need to have `docker` and `docker-compose` installed before continuing.
 Scripts can easily download tens of GB of geographic data, so ensure you have enough free disk space!
 
 At least 8GB RAM is required.
+
+## How long will it take?
+
+You should be able to get started with the default Portland-metro area build in under an hour with a fast internet connection.
+
+On a machine with ~32 CPU cores, a full planet build can be done in under a day with the right settings.
+
+The interpolation build (`pelias prepare interpolation`), which is [single threaded](https://github.com/pelias/interpolation/issues/264) will take 6+ days
+for the full planet. We generally recommend skipping it when you are first
+getting started.
+
+For more info on time estimates and hardware requirements for large build see our [full planet considerations](https://github.com/pelias/documentation/blob/master/full_planet_considerations.md) documentation.
+
+## Quickstart build script
+
+The following shell script can be used to quickly get started with a Pelias build.
+
+```bash
+#!/bin/bash
+set -x
+
+# change directory to the where you would like to install Pelias
+# cd /path/to/install
+
+# clone this repository
+git clone https://github.com/pelias/docker.git && cd docker
+
+# install pelias script
+# this is the _only_ setup command that should require `sudo`
+sudo ln -s "$(pwd)/pelias" /usr/local/bin/pelias
+
+# cd into the project directory
+cd projects/portland-metro
+
+# create a directory to store Pelias data files
+# see: https://github.com/pelias/docker#variable-data_dir
+# note: use 'gsed' instead of 'sed' on a Mac
+mkdir ./data
+sed -i '/DATA_DIR/d' .env
+echo 'DATA_DIR=./data' >> .env
+
+# run build
+pelias compose pull
+pelias elastic start
+pelias elastic wait
+pelias elastic create
+pelias download all
+pelias prepare all
+pelias import all
+pelias compose up
+
+# optionally run tests
+pelias test run
+```
 
 ## Installing the Pelias helper script
 
@@ -36,8 +126,14 @@ You can find the `pelias` file in the root of this repository.
 Advanced users may have a preference how this is done on their system, but a basic example would be to do something like:
 
 ```bash
-git clone https://github.com/pelias/docker.git ~/pelias
-ln -s ~/pelias/pelias /usr/local/bin/pelias
+# change directory to the where you would like to install Pelias
+# cd /path/to/install
+
+# clone this repository
+git clone https://github.com/pelias/docker.git && cd docker
+
+# install pelias script
+sudo ln -s "$(pwd)/pelias" /usr/local/bin/pelias
 ```
 
 Once the command is correctly installed you should be able to run the following command to confirm the pelias command is available on your path:
@@ -87,7 +183,6 @@ Then use your text editor to modify the `.env` file to reflect your new path, it
 ```bash
 COMPOSE_PROJECT_NAME=pelias
 DATA_DIR=/tmp/pelias
-DOCKER_USER=1000
 ```
 
 You can then list the environment variables to ensure they have been correctly set:
@@ -104,14 +199,14 @@ Note: changing the `COMPOSE_PROJECT_NAME` variable is not advisable unless you k
 
 ### Variable: DOCKER_USER
 
-All processes in Pelias containers are run as non-root users. By default, the UID of the processes will be `1000`, which is the first user ID on _most_ Linux systems and is likely to be a good option. However, if restricting file permissions in your data directory to a different user or group is important, this can be overridden by setting the `DOCKER_USER` variable.
-
-This variable can take just a UID or a UID:GID combination such as `1000:1000`. See the [docker-compose](https://docs.docker.com/compose/compose-file/#domainname-hostname-ipc-mac_address-privileged-read_only-shm_size-stdin_open-tty-user-working_dir) and [docker run](https://docs.docker.com/engine/reference/run/#user) documentation on controlling Docker container users for more information.
+This variable is no longer used, and will be ignored. If you still have it in your `.env` file, you can safely remove it.
 
 ## CLI commands
 
+The following is a list of all supported CLI commands.
+
 ```bash
-$ pelias 
+$ pelias
 
 Usage: pelias [command] [action] [options]
 
@@ -119,11 +214,11 @@ Usage: pelias [command] [action] [options]
   compose   logs                     display container logs
   compose   ps                       list containers
   compose   top                      display the running processes of a container
-  compose   exec                     execute an arbitrary docker-compose command
-  compose   run                      execute a docker-compose run command
-  compose   up                       start one or more docker-compose service(s)
-  compose   kill                     kill one or more docker-compose service(s)
-  compose   down                     stop all docker-compose service(s)
+  compose   exec                     execute an arbitrary docker compose command
+  compose   run                      execute a docker compose run command
+  compose   up                       start one or more docker compose service(s)
+  compose   kill                     kill one or more docker compose service(s)
+  compose   down                     stop all docker compose service(s)
   download  wof                      (re)download whosonfirst data
   download  oa                       (re)download openaddresses data
   download  osm                      (re)download openstreetmap data
@@ -136,11 +231,14 @@ Usage: pelias [command] [action] [options]
   elastic   stop                     stop elasticsearch server
   elastic   status                   HTTP status code of the elasticsearch service
   elastic   wait                     wait for elasticsearch to start up
+  elastic   info                     display elasticsearch version and build info
+  elastic   stats                    display a summary of doc counts per source/layer
   import    wof                      (re)import whosonfirst data
   import    oa                       (re)import openaddresses data
   import    osm                      (re)import openstreetmap data
   import    polylines                (re)import polylines data
   import    transit                  (re)import transit data
+  import    csv                      (re)import csv data
   import    all                      (re)import all data
   prepare   polylines                export road network from openstreetmap into polylines format
   prepare   interpolation            build interpolation sqlite databases
@@ -153,20 +251,20 @@ Usage: pelias [command] [action] [options]
 
 ### Compose commands
 
-The compose commands are available as a shortcut to running `docker-compose` directly, they will also ensure that your environment is correctly configured.
+The compose commands are available as a shortcut to running `docker compose` directly, they will also ensure that your environment is correctly configured.
 
-See the docker-compose documentation for more info: https://docs.docker.com/compose/overview/
+See the docker compose documentation for more info: https://docs.docker.com/compose/overview/
 
 ```bash
 pelias compose pull                     update all docker images
 pelias compose logs                     display container logs
 pelias compose ps                       list containers
 pelias compose top                      display the running processes of a container
-pelias compose exec                     execute an arbitrary docker-compose command
-pelias compose run                      execute a docker-compose run command
-pelias compose up                       start one or more docker-compose service(s)
-pelias compose kill                     kill one or more docker-compose service(s)
-pelias compose down                     stop all docker-compose service(s)
+pelias compose exec                     execute an arbitrary docker compose command
+pelias compose run                      execute a docker compose run command
+pelias compose up                       start one or more docker compose service(s)
+pelias compose kill                     kill one or more docker compose service(s)
+pelias compose down                     stop all docker compose service(s)
 ```
 
 ### Download commands
@@ -212,6 +310,8 @@ pelias elastic start                    start elasticsearch server
 pelias elastic stop                     stop elasticsearch server
 pelias elastic status                   HTTP status code of the elasticsearch service
 pelias elastic wait                     wait for elasticsearch to start up
+pelias elastic info                     display elasticsearch version and build info
+pelias elastic stats                    display a summary of doc counts per source/layer
 ```
 
 ### Import commands
@@ -247,47 +347,26 @@ The test command runs the [fuzzy-tester](https://github.com/pelias/fuzzy-tester)
 test      run                      run fuzzy-tester test cases
 ```
 
-## Generic build workflow
+## Optionally cleanup temporary files
 
-The following shell script can be used to automate a build:
+Once the build is complete, you can cleanup temporary files that are no longer useful. The numbers in this snippet below are rough estimates for a full planet build.
 
-```bash
-#!/bin/bash
-set -x
+```
+# These folders can be entirely deleted after the import into elastic search
+rm -rf /data/openaddresses #(~43GB)
+rm -rf /data/tiger #(~13GB)
+rm -rf /data/openstreetmap #(~46GB)
+rm -rf /data/polylines #(~2.7GB)
 
-# create directories
-mkdir /code /data
+# Within the content of the "interpolation" folder (~176GB) we must
+# preserve "street.db" (~7GB) and "address.db" (~25GB), the rest can be deleted
+cd /data/interpolation
+rm -rf -- !("street.db"|"address.db")
 
-# set proper permissions. make sure the user matches your `DOCKER_USER` setting in `.env`
-chown 1000:1000 /code /data
-
-# clone repo
-cd /code
-git clone https://github.com/pelias/docker.git
-cd docker
-
-# install pelias script
-ln -s "$(pwd)/pelias" /usr/local/bin/pelias
-
-# cwd
-cd projects/portland-metro
-
-# configure environment
-sed -i '/DATA_DIR/d' .env
-echo 'DATA_DIR=/data' >> .env
-
-# run build
-pelias compose pull
-pelias elastic start
-pelias elastic wait
-pelias elastic create
-pelias download all
-pelias prepare all
-pelias import all
-pelias compose up
-
-# optionally run tests
-pelias test run
+# Within the content of the "placeholder" folder (~1.4GB), we must
+# preserve the "store.sqlite3" (~0.9GB) file, the rest can be deleted
+cd /data/placeholder
+rm -rf -- !("store.sqlite3")
 ```
 
 ## View status of running containers
@@ -306,9 +385,9 @@ You can inspect the container logs for errors by running:
 pelias compose logs
 ```
 
-## Make an example query
+## Example queries
 
-You can now make queries against your new Pelias build:
+Once all the importers have completed and the Pelias services are running, you can make queries against your new Pelias build:
 
 ### API
 
@@ -327,3 +406,7 @@ You can now make queries against your new Pelias build:
 ### Interpolation
 
 - http://localhost:4300/demo/#13/45.5465/-122.6351
+
+### Libpostal
+
+- http://localhost:4400/parse?address=1730+ne+26th+ave,+portland,+or

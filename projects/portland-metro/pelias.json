@@ -4,7 +4,7 @@
     "timestamp": false
   },
   "esclient": {
-    "apiVersion": "5.6",
+    "apiVersion": "7.5",
     "hosts": [
       { "host": "elasticsearch" }
     ]
@@ -24,7 +24,6 @@
     }
   },
   "api": {
-    "textAnalyzer": "libpostal",
     "services": {
       "placeholder": { "url": "http://placeholder:4100" },
       "pip": { "url": "http://pip:4200" },
@@ -58,7 +57,7 @@
     },
     "openstreetmap": {
       "download": [
-        { "sourceURL": "https://s3.amazonaws.com/metro-extracts.nextzen.org/portland_oregon.osm.pbf" }
+        { "sourceURL": "https://data.geocode.earth/archive/portland-metro/2022-06-20/portland_oregon.osm.pbf" }
       ],
       "leveldbpath": "/tmp",
       "datapath": "/data/openstreetmap",
@@ -84,8 +83,8 @@
     },
     "whosonfirst": {
       "datapath": "/data/whosonfirst",
-      "importVenues": false,
       "importPostalcodes": true,
+      "countryCode": "US",
       "importPlace": [
         "85688513",
         "85688623"
@@ -96,7 +95,7 @@
       "feeds": [
         {
           "layerId": "bikeshare",
-          "url": "http://biketownpdx.socialbicycles.com/opendata/station_information.json",
+          "url": "https://gbfs.biketownpdx.com/gbfs/en/station_information.json",
           "filename": "BIKETOWN-hubs.json",
           "agencyId": "BIKETOWN",
           "agencyName": "BIKETOWN",
@@ -112,7 +111,7 @@
         },
         {
           "layerId": "stops",
-          "url": "http://www.c-tran.com/images/Google/GoogleTransitUpload.zip",
+          "url": "https://data.geocode.earth/archive/portland-metro/2022-06-20/C-TRAN.zip",
           "filename": "C-TRAN-stops.txt",
           "agencyId": "C-TRAN",
           "agencyName": "C-TRAN",

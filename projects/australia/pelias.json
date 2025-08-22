@@ -4,7 +4,7 @@
     "timestamp": false
   },
   "esclient": {
-    "apiVersion": "5.6",
+    "apiVersion": "7.5",
     "hosts": [
       { "host": "elasticsearch" }
     ]
@@ -24,7 +24,6 @@
     }
   },
   "api": {
-    "textAnalyzer": "libpostal",
     "services": {
       "placeholder": { "url": "http://placeholder:4100" },
       "pip": { "url": "http://pip:4200" },
@@ -62,7 +61,7 @@
     },
     "whosonfirst": {
       "datapath": "/data/whosonfirst",
-      "importVenues": false,
+      "countryCode": "AU",
       "importPostalcodes": true,
       "importPlace": [
         "85632793"

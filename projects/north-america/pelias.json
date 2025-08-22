@@ -4,6 +4,7 @@
     "timestamp": false
   },
   "esclient": {
+    "apiVersion": "7.5",
     "hosts": [
       { "host": "elasticsearch" }
     ]
@@ -23,7 +24,6 @@
     }
   },
   "api": {
-    "textAnalyzer": "libpostal",
     "services": {
       "pip": { "url": "http://pip:4200" },
       "libpostal": { "url": "http://libpostal:4400" },
@@ -34,6 +34,12 @@
   "imports": {
     "adminLookup": {
       "enabled": true
+    },
+    "csv": {
+      "datapath": "/data/csv",
+      "files": [],
+      "download": [
+      ]
     },
     "geonames": {
       "datapath": "/data/geonames",
@@ -1833,6 +1839,8 @@
     "whosonfirst": {
       "datapath": "/data/whosonfirst",
       "importPostalcodes": true,
+      "countryCode": ["AI", "AG", "AW", "BS", "BB", "BZ", "BM", "BQ", "BO", "VG", "KY", "CA",
+        "CR", "CU", "CW", "DM", "DO", "SV", "GD", "GL", "GT", "HT", "HN", "JM", "MQ", "MS", "NI", "VE", "PA", "PR", "BL", "KN", "LC", "PM", "VC", "SX", "MF", "MX", "TT", "TC", "US", "VI"],
       "importPlace": "102191575"
     },
     "interpolation": {

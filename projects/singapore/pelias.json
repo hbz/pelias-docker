@@ -4,8 +4,7 @@
     "timestamp": false
   },
   "esclient": {
-    "log": "trace",
-    "apiVersion": "5.6",
+    "apiVersion": "7.5",
     "hosts": [
       { "host": "elasticsearch" }
     ]
@@ -25,7 +24,6 @@
     }
   },
   "api": {
-    "textAnalyzer": "libpostal",
     "services": {
       "placeholder": { "url": "http://placeholder:4100" },
       "pip": { "url": "http://pip:4200" },
@@ -62,10 +60,9 @@
       "files": [ "extract.0sv" ]
     },
     "whosonfirst": {
-      "sqlite": true,
       "datapath": "/data/whosonfirst",
-      "importVenues": false,
       "importPostalcodes": true,
+      "countryCode": "SG",
       "importPlace": [
         "85632605"
       ]

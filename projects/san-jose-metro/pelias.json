@@ -4,7 +4,7 @@
     "timestamp": false
   },
   "esclient": {
-    "apiVersion": "5.6",
+    "apiVersion": "7.5",
     "hosts": [
       { "host": "elasticsearch" }
     ]
@@ -24,7 +24,6 @@
     }
   },
   "api": {
-    "textAnalyzer": "libpostal",
     "services": {
       "pip": { "url": "http://pip:4200" },
       "libpostal": { "url": "http://libpostal:4400" },
@@ -42,7 +41,7 @@
     },
     "geonames": {
       "datapath": "/data/geonames",
-      "countryCode": "ALL"
+      "countryCode": "US"
     },
     "openstreetmap": {
       "download": [
@@ -63,7 +62,7 @@
 		"us/ca/city_of_cupertino.csv",
 		"us/ca/city_of_mountain_view.csv",
 		"us/ca/city_of_palo_alto.csv",
-		"us/ca/city_of_sunnyvale.csv"		
+		"us/ca/city_of_sunnyvale.csv"
       ]
     },
     "polyline": {
@@ -72,8 +71,8 @@
     },
     "whosonfirst": {
       "datapath": "/data/whosonfirst",
-      "importVenues": false,
       "importPostalcodes": true,
+      "countryCode": "US",
       "importPlace": [
         "1360665447"
       ]
@@ -96,7 +95,7 @@
           "agencyId": "VTA",
           "agencyName": "VTA",
           "layerName": "Stop"
-        } 
+        }
        ]
       },
     "interpolation": {
