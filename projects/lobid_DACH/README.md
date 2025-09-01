@@ -10,7 +10,7 @@ Atm not all queries result accurate data, so there is room for proper configurat
 # Setup
 Change to the proper directory:
 ```bash
-$ cd pelias/project/lobid_DACH/
+$ cd /opt/pelias/project/lobid_DACH/
 ```
 Please refer to the instructions at https://github.com/pelias/docker in order to install and configure your docker environment.
 
@@ -18,6 +18,12 @@ The minimum configuration required in order to run this project are [installing 
 
 Please ensure that's all working fine before continuing.
 
+## Data directories
+
+- `/opt/pelias/projects/lobid_DACH/data` for elasticsearch data (not compatible with NFS)
+- `/data/pelias` NFS mount for backup of temporary download files, see https://github.com/pelias/docker?tab=readme-ov-file#optionally-cleanup-temporary-files 
+
+## Elasticsearch
 Tweak elasticsearch to use 8GB:
 ```bash
 $ docker exec -u 0 -it pelias_elasticsearch bash
