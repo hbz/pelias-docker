@@ -67,7 +67,7 @@ function env_load_stream(){
 #   fi
 # fi
 
-set_docker_user
+#set_docker_user
 
 # ensure the user env is correctly set up
 env_check
