@@ -16,6 +16,13 @@ Please refer to the instructions at https://github.com/pelias/docker in order to
 
 The minimum configuration required in order to run this project are [installing prerequisites](https://github.com/pelias/docker#prerequisites), [install the pelias command](https://github.com/pelias/docker#installing-the-pelias-command) and [configure the environment](https://github.com/pelias/docker#configure-environment).
 
+You need to create the data dir set the permissions manually:
+```bash
+$ mkdir data
+$ chown -R $DOCKER_USER_MAPPED:$DOCKER_ROOT_MAPPED data
+```
+See `.env` for variables used.
+
 Please ensure that's all working fine before continuing.
 
 ## Data directories
